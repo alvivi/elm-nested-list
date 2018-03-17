@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "summary": "A list of values of any type, which can also be lists.",
-    "repository": "",
+    "repository": "https://github.com/alvivi/elm-nested-list.git",
     "license": "BSD-3-Clause",
     "source-directories": [
         "src"
