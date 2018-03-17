@@ -147,10 +147,10 @@ toList list =
             toList (Many tail)
 
         Many ((Many (Zero :: more)) :: tail) ->
-            (toList <| Many (Many more :: tail))
+            (toList (Many (Many more :: tail)))
 
         Many ((Many ((One value) :: more)) :: tail) ->
-            value :: (toList <| Many (Many more :: tail))
+            value :: (toList (Many (Many more :: tail)))
 
         Many ((Many ((Many more) :: evenMore)) :: tail) ->
             toList (Many (Many more :: Many evenMore :: tail))
