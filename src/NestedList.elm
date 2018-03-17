@@ -9,6 +9,7 @@ module NestedList
         , ifTrue
         , ifFalse
         , maybe
+        , maybeMap
         )
 
 {-| A list of values of any type, which can also be lists.
@@ -73,7 +74,7 @@ time. Here is a benchmark comparing using `NestedList` against using `List` and
 
 # Helpful Functions
 
-@docs ifTrue, ifFalse, maybe
+@docs ifTrue, ifFalse, maybe, maybeMap
 
 -}
 
@@ -193,3 +194,11 @@ maybe maybeValue =
 
         Just value ->
             One value
+
+
+{-| Transform a `Maybe` value given a function and then transforms that `Maybe`
+into a `NestedList`, **O(1)**. Like `Maybe.map fn >> maybe`.
+-}
+maybeMap : (b -> a) -> Maybe b -> NestedList a
+maybeMap fn =
+    Maybe.map fn >> maybe
