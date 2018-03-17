@@ -12,7 +12,7 @@ suite =
         [ T.describe "toList"
             [ T.test "empty lists" <|
                 \_ ->
-                    E.equal (NestedList.toList NestedList.empty) []
+                    E.equal (NestedList.toList NestedList.zero) []
             , T.test "singleton lists" <|
                 \_ ->
                     E.equal (NestedList.toList <| NestedList.one 9001) [ 9001 ]
@@ -28,11 +28,11 @@ suite =
 
 listOfZeros : Fuzzer (NestedList a)
 listOfZeros =
-    F.map NestedList.group (F.list <| F.constant NestedList.empty)
+    F.map NestedList.many (F.list <| F.constant NestedList.zero)
 
 
 flatPair : Fuzzer a -> Fuzzer ( NestedList a, List a )
 flatPair =
     F.list
         >> F.map (\v -> ( List.map NestedList.one v, v ))
-        >> F.map (Tuple.mapFirst NestedList.group)
+        >> F.map (Tuple.mapFirst NestedList.many)
