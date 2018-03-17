@@ -38,13 +38,13 @@ suite =
 
         heterogeneousNestedListStep =
             N.group
-                [ N.empty
+                [ N.zero
                 , N.one value
-                , N.group [ N.one value, N.one value ]
+                , N.many [ value, value ]
                 , N.group [ N.one value, N.one value, N.one value ]
-                , N.group [ N.one value, N.one value ]
+                , N.many [ value, value ]
                 , N.one value
-                , N.empty
+                , N.zero
                 ]
 
         heterogeneousListOfListsStep =
