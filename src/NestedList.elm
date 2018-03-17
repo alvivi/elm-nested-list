@@ -65,7 +65,7 @@ time. Here is a benchmark comparing using `NestedList` against using `List` and
 
 # Creating Nested Lists
 
-@docs NestedList, zero, one, manyj group
+@docs NestedList, zero, one, many, group
 
 
 # Conversion to Lists
