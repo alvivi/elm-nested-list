@@ -65,7 +65,7 @@ time. Here is a benchmark comparing using `NestedList` against using `List` and
 
 # Creating Nested Lists
 
-@docs NestedList, zero, one, many, group
+@docs NestedList, zero, one, manyj group
 
 
 # Conversion to Lists
@@ -161,8 +161,8 @@ toList list =
         Group ((Many []) :: tail) ->
             toList (Group tail)
 
-        Group ((Many (value :: flatTail)) :: tail) ->
-            value :: toList (Group (Many flatTail :: tail))
+        Group ((Many flatTail) :: tail) ->
+            flatTail ++ toList (Group tail)
 
         Group ((Group []) :: tail) ->
             toList (Group tail)
@@ -173,11 +173,8 @@ toList list =
         Group ((Group ((One value) :: more)) :: tail) ->
             value :: (toList (Group (Group more :: tail)))
 
-        Group ((Group ((Many []) :: more)) :: tail) ->
-            toList (Group (Group more :: tail))
-
-        Group ((Group ((Many (value :: flatTail)) :: more)) :: tail) ->
-            value :: toList (Group (Group ((Many flatTail) :: more) :: tail))
+        Group ((Group ((Many flatList) :: more)) :: tail) ->
+            flatList ++ toList (Group (Group more :: tail))
 
         Group ((Group ((Group more) :: evenMore)) :: tail) ->
             toList (Group (Group more :: Group evenMore :: tail))
