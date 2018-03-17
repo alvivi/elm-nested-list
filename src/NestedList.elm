@@ -4,6 +4,7 @@ module NestedList
         , zero
         , one
         , many
+        , group
         , fromMany
         , toList
         , ifTrue
@@ -64,7 +65,7 @@ time. Here is a benchmark comparing using `NestedList` against using `List` and
 
 # Creating Nested Lists
 
-@docs NestedList, zero, one, many
+@docs NestedList, zero, one, many, group
 
 
 # Conversion to Lists
@@ -86,10 +87,11 @@ time. Here is a benchmark comparing using `NestedList` against using `List` and
 type NestedList a
     = Zero
     | One a
-    | Many (List (NestedList a))
+    | Many (List a)
+    | Group (List (NestedList a))
 
 
-{-| Returns an empty `NestedList`, **O(1)**. The implementation uses a special
+{-| Returns an empty `NestedList a`, **O(1)**. The implementation uses a special
 case for empty list in order to have similar performance than a
 `List (Maybe a)`.
 -}
@@ -98,7 +100,7 @@ zero =
     Zero
 
 
-{-| Returns a singleton `NestedList`, i.e. a list with only one element,
+{-| Returns a singleton `NestedList a`, i.e. a list with only one element,
 **O(1)**.
 -}
 one : a -> NestedList a
@@ -106,11 +108,19 @@ one =
     One
 
 
-{-| Groups a `List` of `NestedList` in a single `NestedList` value, **O(1)**.
+{-| Transform a `List a` of values into `NestedList a` value, **O(1)**.
 -}
-many : List (NestedList a) -> NestedList a
+many : List a -> NestedList a
 many =
     Many
+
+
+{-| Groups a `List (NestedList a)` of values into `NestedList a` value,
+**O(1)**.
+-}
+group : List (NestedList a) -> NestedList a
+group =
+    Group
 
 
 
@@ -122,7 +132,7 @@ many =
 -}
 fromMany : List (NestedList a) -> List a
 fromMany =
-    Many >> toList
+    Group >> toList
 
 
 {-| Converts a `NestedList` into a `List a`, **O(n)**.
@@ -136,26 +146,41 @@ toList list =
         One value ->
             [ value ]
 
-        Many [] ->
+        Many list ->
+            list
+
+        Group [] ->
             []
 
-        Many (Zero :: tail) ->
-            toList (Many tail)
+        Group (Zero :: tail) ->
+            toList (Group tail)
 
-        Many ((One value) :: tail) ->
-            value :: toList (Many tail)
+        Group ((One value) :: tail) ->
+            value :: toList (Group tail)
 
-        Many ((Many []) :: tail) ->
-            toList (Many tail)
+        Group ((Many []) :: tail) ->
+            toList (Group tail)
 
-        Many ((Many (Zero :: more)) :: tail) ->
-            (toList (Many (Many more :: tail)))
+        Group ((Many (value :: flatTail)) :: tail) ->
+            value :: toList (Group (Many flatTail :: tail))
 
-        Many ((Many ((One value) :: more)) :: tail) ->
-            value :: (toList (Many (Many more :: tail)))
+        Group ((Group []) :: tail) ->
+            toList (Group tail)
 
-        Many ((Many ((Many more) :: evenMore)) :: tail) ->
-            toList (Many (Many more :: Many evenMore :: tail))
+        Group ((Group (Zero :: more)) :: tail) ->
+            (toList (Group (Group more :: tail)))
+
+        Group ((Group ((One value) :: more)) :: tail) ->
+            value :: (toList (Group (Group more :: tail)))
+
+        Group ((Group ((Many []) :: more)) :: tail) ->
+            toList (Group (Group more :: tail))
+
+        Group ((Group ((Many (value :: flatTail)) :: more)) :: tail) ->
+            value :: toList (Group (Group ((Many flatTail) :: more) :: tail))
+
+        Group ((Group ((Group more) :: evenMore)) :: tail) ->
+            toList (Group (Group more :: Group evenMore :: tail))
 
 
 
@@ -170,7 +195,7 @@ ifTrue pred value =
     if pred then
         One value
     else
-        Many []
+        Zero
 
 
 {-| Given a predicate, return an empty `NestedList` if the predicates is false,
@@ -181,7 +206,7 @@ ifFalse pred value =
     if not pred then
         One value
     else
-        Many []
+        Zero
 
 
 {-| Converts a `Maybe a` into a singleton `NestedList`, **O(1)**.
@@ -190,7 +215,7 @@ maybe : Maybe a -> NestedList a
 maybe maybeValue =
     case maybeValue of
         Nothing ->
-            Many []
+            Zero
 
         Just value ->
             One value
