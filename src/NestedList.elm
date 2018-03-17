@@ -126,7 +126,6 @@ fromMany =
 -}
 toList : NestedList a -> List a
 toList list =
-    -- O(n)
     case list of
         Zero ->
             []
