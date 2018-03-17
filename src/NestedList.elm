@@ -58,6 +58,8 @@ This library optimizes converting `NestedList` back to a list in linear
 time. Here is a benchmark comparing using `NestedList` against using `List` and
 `List.concat`.
 
+![Benchmark](https://raw.githubusercontent.com/alvivi/elm-nested-list/master/assets/elm-nested-list-benchmark.png)
+
 
 # Creating Nested Lists
 
