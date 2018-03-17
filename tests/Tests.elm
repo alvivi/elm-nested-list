@@ -22,6 +22,26 @@ suite =
             , T.fuzz (flatPair F.int) "list of flat values" <|
                 \( nested, list ) ->
                     E.equal (NestedList.toList nested) list
+            , T.test "nested lists values" <|
+                \_ ->
+                    let
+                        input =
+                            NestedList.many
+                                [ NestedList.zero
+                                , NestedList.one 9001
+                                , NestedList.many []
+                                , NestedList.many
+                                    [ NestedList.zero
+                                    , NestedList.one 9001
+                                    , NestedList.many []
+                                    , NestedList.many
+                                        [ NestedList.zero
+                                        , NestedList.one 9001
+                                        ]
+                                    ]
+                                ]
+                    in
+                        E.equal (NestedList.toList input) [ 9001, 9001, 9001 ]
             ]
         ]
 
