@@ -26,15 +26,15 @@ suite =
                 \_ ->
                     let
                         input =
-                            NestedList.many
+                            NestedList.group
                                 [ NestedList.zero
                                 , NestedList.one 9001
                                 , NestedList.many []
-                                , NestedList.many
+                                , NestedList.group
                                     [ NestedList.zero
                                     , NestedList.one 9001
                                     , NestedList.many []
-                                    , NestedList.many
+                                    , NestedList.group
                                         [ NestedList.zero
                                         , NestedList.one 9001
                                         ]
@@ -48,11 +48,11 @@ suite =
 
 listOfZeros : Fuzzer (NestedList a)
 listOfZeros =
-    F.map NestedList.many (F.list <| F.constant NestedList.zero)
+    F.map NestedList.group (F.list <| F.constant NestedList.zero)
 
 
 flatPair : Fuzzer a -> Fuzzer ( NestedList a, List a )
 flatPair =
     F.list
         >> F.map (\v -> ( List.map NestedList.one v, v ))
-        >> F.map (Tuple.mapFirst NestedList.many)
+        >> F.map (Tuple.mapFirst NestedList.group)
