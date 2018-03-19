@@ -1,3 +1,5 @@
+**DEPRECATED** Use [elm-keyword-list)](https://github.com/alvivi/elm-keyword-list) instead.
+
 
 # elm-nested-list
 
